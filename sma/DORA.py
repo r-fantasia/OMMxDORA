@@ -199,10 +199,12 @@ def find_center(*relevant_parameters):
         last_frame = pre_data.iloc[:,0].iat[-1] #in the index column, give me the last valid value --> this is the max Frames
     else:
         last_frame = frame_end
-    tix = np.linspace(frame_start,last_frame,9)
-    tix_1 = np.round(tix,0)
-
-
+    #tix = np.linspace(frame_start,last_frame,9)
+    #tix_1 = np.round(tix,0)
+    frame_step=int((last_frame-frame_start)/5)
+    
+    tix_1=np.arange(frame_start,last_frame,frame_step)
+    #print(tix_1)
     #scatter plot with a color vector
     p = ax.scatter(x, y, c=c, cmap = cmap,alpha=0.7)
     #add a vertical side bar that defines the color
@@ -551,9 +553,11 @@ def graph(plot_type, *graph_parameters):
                 last_frame = df["index"].iat[-1] #in the index column, give me the last valid value --> this is the max Frames
             else:
                 last_frame = frame_end
-            tix = np.linspace(frame_start,last_frame,9)
-            tix_1 = np.round(tix,0)
-
+            #tix = np.linspace(frame_start,last_frame,9)
+            #tix_1 = np.round(tix,0)
+            frame_step=int((last_frame-frame_start)/5)
+    
+            tix_1=np.arange(frame_start,last_frame,frame_step)
 
             #scatter plot with a color vector
             p = ax.scatter(x, y, c=c, cmap = cmap,alpha=0.7)
@@ -738,9 +742,11 @@ def graph(plot_type, *graph_parameters):
                 last_frame = df["index"].iat[-1] #in the index column, give me the last valid value --> this is the max Frames
             else:
                 last_frame = frame_end
-            tix = np.linspace(frame_start,last_frame,9)
-            tix_1 = np.round(tix,0)
-
+            #tix = np.linspace(frame_start,last_frame,9)
+            #tix_1 = np.round(tix,0)
+            frame_step=int((last_frame-frame_start)/5)
+    
+            tix_1=np.arange(frame_start,last_frame,frame_step)
             #scatter plot with a color vector
             p = ax.scatter(x, y, c=c, cmap = cmap,alpha=0.7)
             #add a vertical side bar that defines the color
