@@ -199,10 +199,12 @@ def find_center(*relevant_parameters):
         last_frame = pre_data.iloc[:,0].iat[-1] #in the index column, give me the last valid value --> this is the max Frames
     else:
         last_frame = frame_end
-    tix = np.linspace(frame_start,last_frame,9)
-    tix_1 = np.round(tix,0)
-
-
+    #tix = np.linspace(frame_start,last_frame,9)
+    #tix_1 = np.round(tix,0)
+    frame_step=int((last_frame-frame_start)/5)
+    
+    tix_1=np.arange(frame_start,last_frame,frame_step)
+    #print(tix_1)
     #scatter plot with a color vector
     p = ax.scatter(x, y, c=c, cmap = cmap,alpha=0.7)
     #add a vertical side bar that defines the color
@@ -551,9 +553,11 @@ def graph(plot_type, *graph_parameters):
                 last_frame = df["index"].iat[-1] #in the index column, give me the last valid value --> this is the max Frames
             else:
                 last_frame = frame_end
-            tix = np.linspace(frame_start,last_frame,9)
-            tix_1 = np.round(tix,0)
-
+            #tix = np.linspace(frame_start,last_frame,9)
+            #tix_1 = np.round(tix,0)
+            frame_step=int((last_frame-frame_start)/5)
+    
+            tix_1=np.arange(frame_start,last_frame,frame_step)
 
             #scatter plot with a color vector
             p = ax.scatter(x, y, c=c, cmap = cmap,alpha=0.7)
@@ -563,6 +567,9 @@ def graph(plot_type, *graph_parameters):
 
             plt.axis('square')
             plt.xticks(rotation=45)
+            circle2 = plt.Circle((0, 0), 80, color='m', fill=False)
+            
+            ax.add_patch(circle2)
 
             # display center
             if display_center == "yes":
@@ -738,9 +745,11 @@ def graph(plot_type, *graph_parameters):
                 last_frame = df["index"].iat[-1] #in the index column, give me the last valid value --> this is the max Frames
             else:
                 last_frame = frame_end
-            tix = np.linspace(frame_start,last_frame,9)
-            tix_1 = np.round(tix,0)
-
+            #tix = np.linspace(frame_start,last_frame,9)
+            #tix_1 = np.round(tix,0)
+            frame_step=int((last_frame-frame_start)/5)
+    
+            tix_1=np.arange(frame_start,last_frame,frame_step)
             #scatter plot with a color vector
             p = ax.scatter(x, y, c=c, cmap = cmap,alpha=0.7)
             #add a vertical side bar that defines the color
@@ -805,7 +814,7 @@ def graph(plot_type, *graph_parameters):
         if plot_type == "find_sus_angle":
 
             # data organization
-            times = data["Time (ms)"]
+            times = data["index"]
             conti_angle = data["Continuous Angle"]
 
             # setup fig and ax
@@ -813,37 +822,37 @@ def graph(plot_type, *graph_parameters):
 
             # choose scatter plot or line plot
             if graph_style == 'scatter':
-                ax.scatter(times, conti_angle, c='b', s=5)
+                ax.scatter(times, conti_angle, c='m', s=5)
             else:
-                line, = plt.plot(times, conti_angle, 'b')
+                line, = plt.plot(times, conti_angle, 'm')
 
             # setting up for making vertical lines or indications of bad points (high and low points)
             ang_min = min(conti_angle)
             ang_max = max(conti_angle)
 
             # find and graph lower bad values
-            bad_times_down = data_fil_down_bad["Time (ms)"]
+            bad_times_down = data_fil_down_bad["index"]
             ax.vlines([bad_times_down], ang_min, ang_max,
                       linestyles='dashed', colors='maroon')
 
             # find and graph upper bad values
-            bad_times_up = data_fil_up_bad["Time (ms)"]
+            bad_times_up = data_fil_up_bad["index"]
             ax.vlines([bad_times_up], ang_min, ang_max,
                       linestyles='dashed', colors='tomato')
 
             # find and graph the invalid bad values
-            invalid_times = data_back["Time (ms)"]
+            invalid_times = data_back["index"]
             ax.vlines([invalid_times], ang_min, ang_max,
                       linestyles='dashed', colors='darkcyan')
 
             # Legend
             ax.legend(['Angle data', 'Lower Sus', 'Upper Sus',
-                      'Invalid Readings'], bbox_to_anchor=(1.04,0), loc='lower right')
+                      'Invalid Readings'],bbox_to_anchor=(1.04,0), loc="lower left")
 
             # formatting
             plt.rcParams['figure.figsize'] = [13, 6]
 
-            plt.xlabel('Time (ms)')
+            plt.xlabel('Frames')
             plt.ylabel('Angle Accumulation (degrees)')
 
             # Title configuration
@@ -864,10 +873,17 @@ def graph(plot_type, *graph_parameters):
             my_title = "_".join(list_of_strings)
             my_title = graph_type + "\n" + my_title #add a line break between graph name and defining parameters
             plt.title(my_title)
-
-            plt.xlim(0, max(times)+1000)
+            if frame_end == -1:   # negative 1
+                last_frame = pre_data.iloc[:,0].iat[-1] #in the index column, give me the last valid value --> this is the max Frames
+            else:
+                last_frame = frame_end
+                
+            frame_step=int((last_frame-frame_start)/5)
+    
+            tix_1=np.arange(frame_start,last_frame,frame_step)
+            plt.xlim(frame_start, last_frame+frame_step)
 #             plt.ylim(-180,max(conti_angle)+180)
-            ax.set_xticks(np.arange(0, max(times)+1000, 1000))
+            ax.set_xticks(np.arange(frame_start,last_frame+frame_step, frame_step))
             ax.set_yticks(np.arange(-360, max(conti_angle)+180, 180))
             plt.xticks(rotation=-45)
             plt.grid()
@@ -886,9 +902,9 @@ def graph(plot_type, *graph_parameters):
             fig, ax = plt.subplots()
 
             if graph_style == 'scatter':
-                ax.scatter(times, conti_angle, c='b', s=5)
+                ax.scatter(times, conti_angle, c='m', s=5)
             else:
-                line, = plt.plot(times, conti_angle, 'b')
+                line, = plt.plot(times, conti_angle, 'm')
 
             # setting up for making vertical lines or indications of bad points (high and low points)
             ang_min = min(conti_angle)
